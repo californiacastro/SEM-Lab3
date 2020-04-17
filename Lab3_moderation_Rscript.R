@@ -59,9 +59,6 @@ library(effects)
 library(carData)
 library(Ecdat)
 library(huxtable)
-library(flair)
-
-  
 
 # ______________________________________________
 
@@ -264,8 +261,8 @@ simp_slope <- data.frame(m1_model_fit[["results"]][["parameters"]][["unstandardi
     param %in% c("HI_Y1974", "LO_Y1974") ~ "1974",
     param %in% c("HI_Y2016", "LO_Y2016") ~ "2016")) %>% 
   mutate(education = case_when(
-    param %in% c("HI_Y1974", "HI_Y2016") ~ 9,
-    param %in% c("LO_Y1974", "LO_Y2016") ~ -9)) 
+    param %in% c("HI_Y1974", "HI_Y2016") ~ 6.28,
+    param %in% c("LO_Y1974", "LO_Y2016") ~ -6.28)) 
 
   
 
