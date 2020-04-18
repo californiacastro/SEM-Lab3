@@ -3,7 +3,21 @@ title: "Lab 3 - Moderation"
 author: "*Adam Garber*"
 subtitle: 'Structural Equation Modeling ED 216F - Instructor: Karen Nylund-Gibson'
 date: "`r format(Sys.time(), '%B %d, %Y')`"
-
+output:
+  html_document:
+    code_folding: show
+    df_print: kable
+    mathjax: default
+    number_sections: yes
+    theme: spacelab
+    toc: yes
+    fig_width: 9 
+    fig_height: 6 
+  pdf_document:
+    df_print: kable
+    number_sections: yes
+    toc: yes
+    toc_depth: 2
 ---
 
 ```{r setup, include=FALSE}
@@ -11,15 +25,22 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, tidy = TRUE
 
 ```
 
+<style type="text/css">
+body{ font-size: 20px; max-width: 1600px; margin: auto; padding: 1em; }
+code.r{ font-size: 18px; }
+p { padding-top: 10px; padding-bottom: 10px; }
+pre { font-size: 16px; }
+</style>
+
 ______________________________________________
 
 # Lab preparation
 
 ______________________________________________
 
-## Creating a version-controlled R-Project with Github
+## $\color{purple}{\text{Creating a version-controlled R-Project with Github}}$
 
-Download repository here: https://github.com/garberadamc/SEM-Lab3
+Download repository here: $\color{blue}{\text{https://github.com/garberadamc/SEM-Lab3}}$
 
 On the Github repository webpage:
 
@@ -32,7 +53,7 @@ c. click "NEW PROJECT" (upper right corner of window)
 d. choose option `Version Control`
 e. choose option `Git`
 f. paste the repository web URL path copied from the `clone or download` menu on Github page
-g. choose location of the R-Project (too many nested folders will result in filepath error)
+g. choose location of the R-Project ($\color{red}{\text{too many nested folders will result in filepath error}}$)
 
 ______________________________________________
 
@@ -67,6 +88,7 @@ library(effects)
 library(carData)
 library(Ecdat)
 library(huxtable)
+library(flair)
 
 ```
 
@@ -76,7 +98,7 @@ ______________________________________________
 
 ______________________________________________
 
-Read the dataframe into your R-environment from package {`Ecdat`}
+Read the dataframe into your R-environment from package {`carData`}
 ```{r}
 
 data(Vocab)
@@ -87,7 +109,7 @@ vocab <- as.data.frame(Vocab)
 
 ______________________________________________
 
-Take a look at focal variables
+Take a look at focal variables, make a `tribble` table
 ```{r, eval=TRUE, echo=FALSE, results='asis'}
 
 var_table <- tribble(
@@ -121,7 +143,7 @@ table1
 ______________________________________________
 
 Run a regression of the model with interaction of `sex` and `education` using the `lm` function 
-```{r lm1}
+```{r lm1, include=FALSE}
 
 m1_interact <- lm(formula =
                            vocabulary ~ sex +
@@ -131,6 +153,15 @@ m1_interact <- lm(formula =
 
 ```
 
+```{r, echo=FALSE}
+
+decorate("lm1") %>% 
+  flair("vocabulary", color = "#FF851B") %>% 
+  flair("sex", color = "#0074D9") %>% 
+  flair("education", color = "#2ECC40") %>% 
+  flair("sex:education", color = "#39CCCC")
+
+```
 
 Print summary of regression output using package {`huxtable`}
 ```{r}
@@ -144,12 +175,19 @@ Print the Latex syntax for the regression equation using the package {`equatioma
 extract_eq(m1_interact)
 ```
 
+$$
+\color{#FF851B}{\text{vocabulary}} = \alpha + \beta_{1}(\color{#0074D9}{\text{sex}_{\text{Male}}}) + \beta_{2}(\color{#2ECC40}{\text{education}}) +
+\beta_{3}(\color{#0074D9}{\text{sex}_{\text{Male}}} \times \color{#2ECC40}{\text{education}}) + \epsilon
+$$
 
 ```{r, results='asis', , eval=FALSE}
 extract_eq(m1_interact, use_coefs = TRUE)
 
 ```
 
+$$
+\color{#FF851B}{\text{vocabulary}} = 1.79 - 0.28(\color{#0074D9}{\text{sex}_{\text{Male}}}) + 0.33(\color{#2ECC40}{\text{education}}) + 0.01(\color{#0074D9}{\text{sex}_{\text{Male}}} \times \color{#2ECC40}{\text{education}}) + \epsilon
+$$
 
 Plot the interaction effect using the package {`effects`}
 ```{r}
@@ -174,7 +212,7 @@ vocab2 <-  vocab %>%
 ```
 
 Run regression with interaction between `year` and `education`
-```{r}
+```{r lm2, include=FALSE}
 
 # below is R-code to center covariate 'education'
 # vocab2 <- vocab %>% 
@@ -193,14 +231,36 @@ huxreg(m2_interact, error_pos = 'right')
 
 ```
 
+```{r, echo=FALSE}
+
+decorate("lm2") %>% 
+  flair("vocabulary", color = "#FF851B") %>% 
+  flair("sex", color = "#0074D9") %>% 
+  flair("education", color = "#2ECC40") %>% 
+  flair("year", color = "#39CCCC")
+
+```
+
 Print the Latex syntax for the regression equation using the package {`equatiomatic`}
-```{r, results='asis'}
+```{r, eval=FALSE}
 
 extract_eq(m2_interact)
+
+```
+
+$$
+\color{#FF851B}{\text{vocabulary}} = \alpha + \beta_{1}(\color{#0074D9}{\text{sex}_{\text{Male}}}) + \beta_{2}(\color{#2ECC40}{\text{education}}) + \beta_{3}(\color{#39CCCC}{\text{year}_{\text{2016}}}) + \beta_{4}(\color{#2ECC40}{\text{education}} \times \color{#39CCCC}{\text{year}_{\text{2016}}}) + \epsilon
+$$
+
+```{r, eval=FALSE}
 
 extract_eq(m2_interact, use_coefs = TRUE)
 
 ```
+
+$$
+\color{#FF851B}{\text{vocabulary}} = 1.6 - 0.07(\color{#0074D9}{\text{sex}_{\text{Male}}}) + 0.38(\color{#2ECC40}{\text{education}}) + 0.37(\color{#39CCCC}{\text{year}_{\text{2016}}}) - 0.08(\color{#2ECC40}{\text{education}} \times \color{#39CCCC}{\text{year}_{\text{2016}}}) + \epsilon
+$$
 
 Plot the interaction effect using the package {`effects`}
 ```{r}
@@ -329,6 +389,10 @@ ggplot(plot_data, aes(x=education, y=est, color=year, group=year)) +
 ggsave(here("figures", "m1_simple_slope.png"), height = 6, width = 8)
 ```
 
+```{r, echo=FALSE, eval=TRUE, out.width = "80%", out.height= "80%", fig.pos="h"}
+
+knitr::include_graphics(here("figures", "m1_simple_slope.png"))
+```
 
 ______________________________________________
 
@@ -494,7 +558,10 @@ ggplot(plot_data2, aes(x=experience, y=est, color=size, group=size)) +
 ggsave(here("figures", "m2_simple_slope.png"), height = 6, width = 8)
 ```
 
+```{r, echo=FALSE, eval=TRUE, out.width = "80%", out.height= "80%", fig.pos="h"}
 
+knitr::include_graphics(here("figures", "m2_simple_slope.png"))
+```
 
 
 
